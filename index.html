@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Live Monitoring Of Water</title>
+</head>
+
+<body>
+    <center><h2>Live Data</h2></center>
+        <hr style="height:3px;border-width:0;color:rgb(148, 96, 96);background-color:gray">
+   	
+   		<center><table id="table1" border='1'>
+            <tr>
+                <th>Time</th>
+                <th>Date</th>
+                <th>Value1</th>
+                
+            </tr>
+            <tbody id="tableContent">
+            </tbody>
+        </table></center>
+
+        <hr style="height:3px;border-width:0;color:gray;background-color:gray">
+
+</body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+<script>
+    /////////////Ajax Requests////////////
+    $(document).ready(function() {
+        // Fetch the initial table
+        refreshTable();
+    
+        // Fetch every 1 second
+        setInterval(refreshTable, 1000);
+    });
+    
+    function refreshTable(){
+        
+        // var trHTML = '';	    
+        
+        $.getJSON('https://spreadsheets.google.com/feeds/list/1A9MxTygT3DphZG3AcDuRuGZYUQETZvUvVMOHiMvnzlU/1/public/full?alt=json', function(data) {
+        	
+            	var trHTML = '';
+
+            	for (var i = 0; i < data.feed.entry.length; ++i) {
+                	var myData_map, myData_order;
+
+                    trHTML += '<tr><td>' + data.feed.entry[i].gsx$date.$t + 
+                        	  '</td><td>' + data.feed.entry[i].gsx$time.$t + 
+                        	  '</td><td>' + data.feed.entry[i].gsx$value1.$t + 
+                        	  '</td></tr>';
+
+                }
+
+                console.log(trHTML);
+        		$('#tableContent').html(trHTML);
+        		var trHTML = '';
+
+        	});	 
+    }	
+    
+</script>
+</html>
