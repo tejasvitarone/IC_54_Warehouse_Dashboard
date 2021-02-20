@@ -8,7 +8,7 @@
     <center><h2>Live Water Level Data</h2></center>
         <hr style="height:3px;border-width:0;color:rgb(148, 96, 96);background-color:gray">
    	
-   		<center><table id="table1" border='1', bgcolor='pink'  border-bottom: 1px solid #ddd;>
+   		<center><table id="table1" cellspacing='0' cellpadding='10' border='1', bgcolor='pink'  border-bottom: 1px solid #ddd;>
             <tr bgcolor='gray'>
                 <th>Time</th>
                 <th>Date</th>
@@ -45,9 +45,9 @@
             	var trHTML = '';
 
             	for (var i = 0; i < data.feed.entry.length; ++i) {
-                	var myData_map, myData_order;
+                	
 
-                    trHTML += '<tr><th>' + data.feed.entry[i].gsx$date.$t + 
+                    trHTML += '<tr bgcolor="#e6f7ff" ><th>' + data.feed.entry[i].gsx$date.$t + 
                         	  '</th><td>' + data.feed.entry[i].gsx$time.$t + 
                         	  '</td><th>' + data.feed.entry[i].gsx$value1.$t + 
                             '</th><td>' + data.feed.entry[i].gsx$cityid.$t + 
