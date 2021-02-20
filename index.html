@@ -5,17 +5,18 @@
 </head>
 
 <body>
-    <center><h2>Live Data</h2></center>
+    <center><h2>Live Water Level Data</h2></center>
         <hr style="height:3px;border-width:0;color:rgb(148, 96, 96);background-color:gray">
    	
-   		<center><table id="table1" border='1'>
-            <tr>
+   		<center><table id="table1" border='1', bgcolor='pink'  border-bottom: 1px solid #ddd;>
+            <tr bgcolor='gray'>
                 <th>Time</th>
                 <th>Date</th>
                 <th>Value1</th>
+                <th>city id</th>
                 
             </tr>
-            <tbody id="tableContent">
+            <tbody id="tableContent" ></tbody> 
             </tbody>
         </table></center>
 
@@ -32,7 +33,7 @@
         refreshTable();
     
         // Fetch every 1 second
-        setInterval(refreshTable, 1000);
+        setInterval(refreshTable, 5000);
     });
     
     function refreshTable(){
@@ -46,9 +47,10 @@
             	for (var i = 0; i < data.feed.entry.length; ++i) {
                 	var myData_map, myData_order;
 
-                    trHTML += '<tr><td>' + data.feed.entry[i].gsx$date.$t + 
-                        	  '</td><td>' + data.feed.entry[i].gsx$time.$t + 
-                        	  '</td><td>' + data.feed.entry[i].gsx$value1.$t + 
+                    trHTML += '<tr><th>' + data.feed.entry[i].gsx$date.$t + 
+                        	  '</th><td>' + data.feed.entry[i].gsx$time.$t + 
+                        	  '</td><th>' + data.feed.entry[i].gsx$value1.$t + 
+                            '</th><td>' + data.feed.entry[i].gsx$cityid.$t + 
                         	  '</td></tr>';
 
                 }
@@ -56,9 +58,12 @@
                 console.log(trHTML);
         		$('#tableContent').html(trHTML);
         		var trHTML = '';
+            
 
         	});	 
     }	
     
 </script>
 </html>
+
+
