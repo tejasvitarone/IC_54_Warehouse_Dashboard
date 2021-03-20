@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    
+    <!-- Linking custom css sheet -->
+    <link rel="stylesheet" href="main.css" type="text/css">
+  </head>
+
+<body>
+  <body background="back.jpg">
+  <div class="div1" ; style="border-style: ridge" ;>
+    <h1 style="color:red; text-align:center;"> FLOOD MONITORING</h1>
+  </div>
+
+  <div class="navbar">
+    <a class="current" href="graph.html">Graph</a>
+    <a href="map.html">Map</a>
+    <a href="table.html">Table</a>
+   
+  </div>
+
+  <hr style="height:4px;border-width:0;color:gray;background-color:gray">
+
+  <div id="curve_chart" style="width: 100%; height: 100vh;">
+  </body>
+  </body>
+<script type="text/javascript">
+  $(document).ready(function () {
+    // Fetch the initial Chart
+    refreshChart();
+    // Fetch every 5 second
+    setInterval(refreshChart, 25000);
+  });
+  google.charts.load("current", { packages: ['corechart', 'line'] });
+  google.charts.setOnLoadCallback(refreshChart);
+
+  function refreshChart() {
+    var jsonDataObject = [];
+    var graph_arr = [['Current time', 'level', { role: 'style' }]];
+    var bar_color = [];
+    $.getJSON('https://spreadsheets.google.com/feeds/list/1f1GTmf6-73sgdrKux5DTSbCsI1ObygfWjmUNQIxMqc0/2/public/full?alt=json', function (data) {
+      for (var i = 0; i < data.feed.entry.length; ++i) {
+        var json_data = {
+          //"CityId" : data.feed.entry[i].gsx$cityid.$t,
+          "level": parseFloat(data.feed.entry[i].gsx$level.$t),
+        };
+        jsonDataObject.push(json_data);
+      };
+
+      for (var j in jsonDataObject) {
+        graph_arr.push([jsonDataObject[j].City, jsonDataObject[j].level, bar_color[j]]);
+      }
+      var graphArray_Final = google.visualization.arrayToDataTable(graph_arr);
+
+      var data = new google.visualization.DataView(graphArray_Final);
+
+      var options = {
+        title: 'water level on road',
+        hAxis: { title: 'time' },
+        vAxis: { title: 'level data' },
+        legend: { position: "none" },
+      };
+      var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+      chart.draw(data, options);
+
+    });
+  }
+</script>
+</html>
