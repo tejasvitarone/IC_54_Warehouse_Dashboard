@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Live Monitoring Of Water</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Linking custom css sheet -->
+  <link rel="stylesheet" href="main.css" type="text/css">
+</head>
+
+<body background="back.jpg">
+  <div class="div1" style="border-style: ridge">
+    <h1 style="color:red; text-align:center;"> FLOOD MONITORING</h1>
+  </div>
+  <div class="navbar">
+    <a href="graph.html">Graph</a>
+    <a href="map.html">Map</a>
+    <a href="table.html">Table</a>
+  </div>
+  <hr style="height:3px;border-width:0;color:rgb(148, 96, 96);background-color:gray">
+
+  <table id="table2" cellspacing='0' cellpadding='10'" border='1' , bgcolor='white' border-bottom: 2px solid #ddd;>
+    <h1 > Current Data </h1>
+   <tr bgcolor='gray' align=" right">
+    <th align="right">Real time water level value :-</th>
+    </tr>
+    <tbody style="font-weight:bold ; width: 100px ; height: 30px;" cellspacing='0' cellpadding='10' align="center"
+      id="tableContent1"></tbody>
+  </table>
+
+  <hr style="height:3px;border-width:0;color:rgb(148, 96, 96);background-color:gray">
+  <center>
+    <h1>Live Water Level Data</h1>
+  </center>
+  <center>
+    <table id="table1" cellspacing='0' cellpadding='10' border='1' , bgcolor='white' border-bottom: 1px solid #ddd;>
+      <tr bgcolor='gray'>
+        <th>Time</th>
+        <th>Date</th>
+        <th>Water level</th>
+        <th>City code</th>
+        <!-- <th>City </th> -->
+        <th>Voltage</th>
+      </tr>
+      <tbody id="tableContent"></tbody>
+
+    </table>
+
+    <div class="pagination">
+      <button class="paginate-button" type="button" onclick="paginate(-1)">&lt;</button>
+      <button class="paginate-button" type="button" onclick="paginate(1)">&gt;</button>
+      <select onchange="setPagiSize(this)"></select>
+      <input type="checkbox" id="chkReverse" onchange="setOrder(this)" />
+      <label for="chkReverse">Reverse order</label>
+    </div>
+
+  </center>
+
+  <hr style="height:3px;border-width: 1;color:gray; background-color:gray">
+
+
+</body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+<script>
+  $(document).ready(function () {
+    refreshTable();
+    setInterval(refreshTable, 5000);
+    // refreshTable
+  });
+
+  // global variables
+  const
+    $pagination = $('.pagination'),
+    $tbody = $('#table1 tbody'),
+    pageSizeOptions = [10, 15, 25, 50, 100],
+    url = 'https://spreadsheets.google.com/feeds/list/1f1GTmf6-73sgdrKux5DTSbCsI1ObygfWjmUNQIxMqc0/2/public/full?alt=json';
+  let entry = [],
+    data = [],
+    page = 0,
+    pageSize = pageSizeOptions[1],
+    pageSizeMax = 1,
+    isReversed = false;
+
+  function refreshTable() {
+    $.getJSON(url, function (response) {
+      // ------------------- //
+      entry = response.feed.entry;
+      data = entry;
+      pageSizeMax = Math.ceil(entry.length / pageSize);
+
+      paginate(1);
+
+      let option = '';
+      $.each(pageSizeOptions, (_, o) => {
+        option += `<option value="${o}"${o === pageSize ? " selected" : ""}>${o}</option>`;
+      });
+      $pagination.find('select').html(option);
+
+      // ---------------------------- //
+      var trHTML = '';
+      var latest = '';
+      var len = response.feed.entry.length;
+      var latest = response.feed.entry[len - 1].gsx$level.$t;
+
+      trHTML += '<tr bgcolor="#e6f7ff"><th>' + 'time' + '</th><td>' + 'date' +
+        '</th><td>' + 'level' + '</td><th>' + 'citycode' + '</th><td>' + 'city' + '</th><td>' + 'voltage' + '</td></tr>';
+
+      // for (var i = len - 1; i > 0; --i) {
+      //   var time = response.feed.entry[i].gsx$time.$t;
+      //   var date = response.feed.entry[i].gsx$date.$t;
+      //   var level = response.feed.entry[i].gsx$level.$t;
+      //   var citycode = response.feed.entry[i].gsx$citycode.$t;
+      //  
+      //   if (citycode = "1001") {
+      //     var city = "nagpur";
+      //   }
+      //   var voltage = response.feed.entry[i].gsx$voltage.$t;
+
+      //   trHTML += '<tr bgcolor="#e6f7ff"><th>' + time + '</th><td>' + date +
+      //     '</th><td>' + level + '</td><th>' + citycode + '</th><td>' + city + '</th><td>' + voltage + '</td></tr>';
+      // }
+      console.log(trHTML);
+      $('#tableContent').html(trHTML);
+      // var trHTML = '';
+
+      console.log(latest);
+      $('#tableContent1').html(latest);
+      // var latest = '';
+
+    });
+
+  }
+
+  function fillTable() {
+    const
+      len = isReversed ? data.length + 1 : 0,
+      pageBase = (page - 1) * pageSize;
+    let tbody = '';
+
+    $.each(data.slice(pageBase, pageSize * page), (i, o) => {
+      tbody += `<tr>
+        <td>${Math.abs(len - ((i + 1) + pageBase))}</td>
+        <td>${o.gsx$time.$t}</td>
+        <td>${o.gsx$date.$t}</td>
+        <td>${o.gsx$level.$t}</td>
+        <td>${o.gsx$citycode.$t}</td>
+        <td>${o.gsx$voltage.$t}</td>
+        </tr>`;
+    });
+
+    $tbody.html(tbody)
+  }
+
+  function paginate(pageAdd) {
+    page += pageAdd;
+
+    if (page < 1) {
+      page = 1;
+      return false;
+    }
+
+    if (page > pageSizeMax) {
+      page = pageSizeMax;
+      return false;
+    }
+
+    fillTable();
+  }
+
+  function setOrder(e) {
+    isReversed = !isReversed;
+    data = entry.reverse();
+    page = 1;
+    fillTable();
+  }
+
+  function setPagiSize(e) {
+    page = 1;
+    pageSize = $(e).val();
+    pageSizeMax = Math.ceil(entry.length / pageSize);
+
+    fillTable();
+  }
+</script>
+
+</html>
