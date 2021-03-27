@@ -98,7 +98,7 @@
 
         for (var j = 0; j < jsonDataObject.length; j++) {
 
-          if (((jsonDataObject[j].level > 0 ) && (jsonDataObject[j].level <= 20))) {
+          if (((jsonDataObject[j].level > 0 ) && (jsonDataObject[j].level < 18))) {
             var marker = L.marker([parseFloat(jsonDataObject[j].Latitude), parseFloat(jsonDataObject[j].Longitude)],{ icon: greenMarker });
             marker.bindPopup(jsonDataObject[j].City, {
               autoClose: false
@@ -120,7 +120,7 @@
               attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(map);
           }
-          else if (((jsonDataObject[j].level >= 21) && (jsonDataObject[j].level <= 40))) {
+          else if (((jsonDataObject[j].level >= 18) && (jsonDataObject[j].level <= 26))) {
             var marker = L.marker(L.latLng(parseFloat(jsonDataObject[j].Latitude), parseFloat(jsonDataObject[j].Longitude)), { icon: yellowMarker });
             marker.bindPopup(jsonDataObject[j].City, {
               autoClose: false
@@ -142,7 +142,7 @@
               attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(map);
           }
-          else if (((jsonDataObject[j].level >= 41) && (jsonDataObject[j].level <= 58))) {
+          else if (jsonDataObject[j].level >= 27) {
             var marker = L.marker(L.latLng(parseFloat(jsonDataObject[j].Latitude), parseFloat(jsonDataObject[j].Longitude)), { icon: redMarker });
             marker.bindPopup(jsonDataObject[j].City, {
               autoClose: false
